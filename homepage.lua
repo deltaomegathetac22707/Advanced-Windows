@@ -54,7 +54,7 @@ local function appOpen(name)
         clickopenshell()
     
     else
-        app = _G.app[tostring(name)]
+        local app = _G.app[tostring(name)]
         local idV = multishell.launch({}, app)
     end
 
@@ -62,16 +62,16 @@ end
 
 --PrimeUI.centerLabel(win, x, y, width, text, fgColor, bgColor)
 
-appID = 0
+local appID = 0
 _G.app = {}
 
 function placeApp(x,y,name)
-    boxSize = 11
-    nameWithoutlua = name:gsub("%.lua$", "")
-    namePreChange = nameWithoutlua
+    local boxSize = 11
+    local nameWithoutlua = name:gsub("%.lua$", "")
+    local namePreChange = nameWithoutlua
     name = shorten(nameWithoutlua, boxSize - 3)
-    prefix = string.sub(nameWithoutlua, 1, 2)
-    openappfunction = (
+    local prefix = string.sub(nameWithoutlua, 1, 2)
+    local openappfunction = (
                         function()
                             appOpen(appID)
                         end
@@ -83,17 +83,17 @@ function placeApp(x,y,name)
 
     _G.app[tostring(appID)] = nameWithoutlua .. ".lua"
 
-    appID = appID + 1
+    local appID = appID + 1
 end
 
 
 function drawAllApps()
-    Yplace = 5
+    local Yplace = 5
     placeApp(4, Yplace, "Shell")
 
     local path = "/appfiles/"
 
-    max = 5
+    local max = 5
     local Xplace = 4
 
     for _, item in ipairs(fs.list(path)) do
