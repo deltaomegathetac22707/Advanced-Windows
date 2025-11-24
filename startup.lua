@@ -1,9 +1,49 @@
-
+package.path = package.path .. ";/libs/?.lua"
 -- Tbh i dont even know what im doing
 -- this is driving me insane and I dont even know why the buttons arent giving the right thing
 
+
+
+function strToBool(inputStr)
+    if inputStr == "true" then
+        return true
+    elseif inputStr == "false" then
+        return true
+    end
+end
+
+--------------------------- Settings
+_G.currentSettings = {}
+
+local file = io.open("/sysfiles/system.conf", "r")
+
+for line in file:lines() do
+    if line:find("^gps:") then
+        _G.currentSettings.gps = strToBool(line:gsub("^gps: ", ""))
+    end
+    if line:find("^showID:") then
+        _G.currentSettings.showID = strToBool(line:gsub("^showID: ", ""))
+    end
+end
+
+file:close()
+
+
+_G.MAC = {}
+_G.MAC.wired = {}
+
+local file = io.open("/sysfiles/.mac", r)
+local hextet = 1
+
+for line in file:lines() do
+    _G.MAC.wired[hextet] = tonumber(line, 16)
+    hextet = hextet + 1
+end
+
+------------------------------
+
 local id -- declare outside
-local PrimeUI = require("PrimeUI")
+local PrimeUI = require "PrimeUI"
 
 if _G.homeExists ~= true then
     _G.mistake = pcall(function()

@@ -1,4 +1,5 @@
-local PrimeUI = require("PrimeUI")
+package.path = package.path .. ";/libs/?.lua"
+local PrimeUI = require "PrimeUI"
 
 local shutdownFlag = false
 local rebootFlag = false
@@ -41,16 +42,15 @@ local function appOpen(id)
 
     if file == "Shell.lua" then
         -- Open CC shell
-        local pid = multishell.launch({}, "/rom/programs/shell.lua")
-        multishell.setTitle(pid, "Shell")
+        local pid = shell.openTab("/rom/programs/shell.lua")
         return
     end
 
     -- Launch app from /appfiles/
     local path = "/appfiles/" .. file
     if fs.exists(path) then
-        local pid = multishell.launch({}, path)
-        multishell.setTitle(pid, file:gsub("%.lua$", ""))
+        local pid = shell.openTab(path)
+
     end
 end
 
@@ -83,7 +83,7 @@ end
 local function drawAllApps()
     local Y = 5
     local X = 4
-    local maxWidth = 54
+    local maxWidth = 52
 
     -- Add shell app
     placeApp(X, Y, "Shell.lua")
@@ -91,7 +91,7 @@ local function drawAllApps()
     local path = "/appfiles/"
 
     for _, file in ipairs(fs.list(path)) do
-        X = X + 10
+        X = X + 12
 
         if X >= maxWidth then
             X = 4
@@ -100,9 +100,28 @@ local function drawAllApps()
         
         placeApp(X, Y, file)
     end
+
 end
 
+local Cid = "ID:".. tostring(os.getComputerID())
 
+local function refresh()
+        PrimeUI.clear()
+
+        PrimeUI.button(win, 1, 1, "O", clickedExit, colors.white, nil, colors.gray, nil)
+        PrimeUI.button(win, 5, 1, "R", clickedReboot, colors.white, nil, colors.gray, nil)
+
+        PrimeUI.textBox(win, 12, 1, 40, 1, shorten(windowname, 35), colors.white, colors.black)
+
+        if _G.currentSettings.showID ~= false then
+            PrimeUI.textBox(win, 45, 1, 10, 1, Cid , colors.white, colors.black)
+        end
+
+        -- Divider
+        PrimeUI.horizontalLine(win, 1, 2, 70, colors.gray, nil)
+
+        drawAllApps()
+    end
 
 
 local function main()
@@ -115,11 +134,19 @@ local function main()
     -- Title
     PrimeUI.textBox(win, 12, 1, 40, 1, shorten(windowname, 35), colors.white, colors.black)
 
+    -- Displays Computer ID if true
+    if _G.currentSettings.showID ~= false then
+        PrimeUI.textBox(win, 45, 1, 10, 1, Cid , colors.white, colors.black)
+    end
+
     -- Divider
     PrimeUI.horizontalLine(win, 1, 2, 70, colors.gray, nil)
 
     -- App icons
     drawAllApps()
+
+    -- Refresh rate 1min
+    PrimeUI.interval(20, refresh)
 
     -- Run UI
     PrimeUI.run()
