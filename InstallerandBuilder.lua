@@ -1,4 +1,4 @@
-shell.run("pastebin get q2SQ7eRg /libs/crypt.lua")
+shell.run("pastebin get 6UV4qfNF /libs/crypt.lua")
 
 package.path = package.path .. ";/libs/?.lua"
 
